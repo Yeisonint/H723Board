@@ -30,7 +30,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include "st7735.h"
+#include "lcd.h"
 #include "camera.h"
 /* USER CODE END Includes */
 
@@ -179,6 +179,12 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   LCD_Test();
+  #ifdef TFT96
+  Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA);
+  #elif TFT18
+  Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA2);
+  #endif
+  HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)&pic, FrameWidth * FrameHeight * 2 / 4);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -287,6 +293,36 @@ void SayHelloSerialTask(void *argument)
 	  printf("Hello World\n\r");
 	  osDelay(1000);
   }
+}
+void CamLCDTask(void *argument) {
+	uint8_t text[20];
+	for (;;) {
+		if (DCMI_FrameIsReady) {
+			DCMI_FrameIsReady = 0;
+#ifdef TFT96
+			ST7735_FillRGBRect(&st7735_pObj, 0, 0, (uint8_t*) &pic[20][0],ST7735Ctx.Width, 80);
+#elif TFT18
+			ST7735_FillRGBRect(&st7735_pObj,0,0,(uint8_t *)&pic[0][0], ST7735Ctx.Width, ST7735Ctx.Height);
+#endif
+			sprintf((char*) &text, "%ldFPS", Camera_FPS);
+			LCD_ShowString(5, 5, 60, 16, 12, text);
+		}
+		osDelay(1);
+	}
+}
+void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
+{
+	static uint32_t count = 0,tick = 0;
+
+	if(HAL_GetTick() - tick >= 1000)
+	{
+		tick = HAL_GetTick();
+		Camera_FPS = count;
+		count = 0;
+	}
+	count ++;
+
+  DCMI_FrameIsReady = 1;
 }
 PUTCHAR_PROTOTYPE
 {

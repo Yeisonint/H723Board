@@ -68,6 +68,13 @@ const osThreadAttr_t SayHelloSerial_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for CamLCD */
+osThreadId_t CamLCDHandle;
+const osThreadAttr_t CamLCD_attributes = {
+  .name = "CamLCD",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -77,6 +84,7 @@ const osThreadAttr_t SayHelloSerial_attributes = {
 void StartDefaultTask(void *argument);
 void BlinkLEDTask(void *argument);
 void SayHelloSerialTask(void *argument);
+void CamLCDTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -115,6 +123,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of SayHelloSerial */
   SayHelloSerialHandle = osThreadNew(SayHelloSerialTask, NULL, &SayHelloSerial_attributes);
+
+  /* creation of CamLCD */
+  CamLCDHandle = osThreadNew(CamLCDTask, NULL, &CamLCD_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -178,6 +189,24 @@ __weak void SayHelloSerialTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END SayHelloSerialTask */
+}
+
+/* USER CODE BEGIN Header_CamLCDTask */
+/**
+* @brief Function implementing the CamLCD thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_CamLCDTask */
+__weak void CamLCDTask(void *argument)
+{
+  /* USER CODE BEGIN CamLCDTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END CamLCDTask */
 }
 
 /* Private application code --------------------------------------------------*/
