@@ -41,7 +41,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+#define TFT96 1
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
