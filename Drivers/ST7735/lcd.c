@@ -67,11 +67,11 @@ void LCD_Test(void)
 	LCD_SetBrightness(0);
 	
 	#ifdef TFT96
-	extern unsigned char WeActStudiologo_160_80[];
-	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,WeActStudiologo_160_80);
+	extern unsigned char yeisonint_logo_160_80[];
+	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,yeisonint_logo_160_80);
 	#elif TFT18
-	extern unsigned char WeActStudiologo_128_160[];
-	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,WeActStudiologo_128_160);	
+//	extern unsigned char yeisonint_logo_128_160[];
+//	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,yeisonint_logo_128_160);
 	#endif
 	
   uint32_t tick = get_tick();

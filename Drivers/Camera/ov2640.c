@@ -505,3 +505,15 @@ int ov2640_init(framesize_t framesize)
   return 0;
 }
 
+
+int ov2640_init2(I2C_HandleTypeDef *hi2c,framesize_t framesize, pixformat_t pixformat, bool hmirror, bool vflip){
+	hcamera.hi2c = hi2c;
+	hcamera.addr = OV2640_ADDRESS;
+	hcamera.timeout = 100;
+	reset();
+	hcamera.framesize = framesize;
+	hcamera.pixformat = pixformat;
+	set_pixformat(hcamera.pixformat);
+	set_hmirror(hmirror?1:0);
+	set_vflip(vflip?1:0);
+}

@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include "lcd.h"
 #include "camera.h"
+#include "ov2640.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -180,7 +181,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   LCD_Test();
   #ifdef TFT96
-  Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA);
+//  Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA);
+  // Init OV2640 in RAW mode (RGB565)
+  ov2640_init2(&hi2c1, FRAMESIZE_QQVGA, PIXFORMAT_RGB565,true,true);
   #elif TFT18
   Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA2);
   #endif
