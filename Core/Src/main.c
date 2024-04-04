@@ -22,9 +22,11 @@
 #include "dcmi.h"
 #include "dma.h"
 #include "i2c.h"
+#include "sdmmc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
+#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -53,7 +55,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+HAL_SD_CardCIDTypedef pCID;
+HAL_SD_CardCSDTypedef pCSD;
+HAL_SD_CardInfoTypeDef pCardInfo;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -178,6 +182,7 @@ int main(void)
   MX_SPI4_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_SDMMC1_SD_Init();
   /* USER CODE BEGIN 2 */
   LCD_Test();
   #ifdef TFT96
@@ -188,6 +193,19 @@ int main(void)
   Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA2);
   #endif
   HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)&pic, FrameWidth * FrameHeight * 2 / 4);
+
+  HAL_SD_GetCardCID(&hsd1, &pCID);
+  HAL_SD_GetCardCSD(&hsd1, &pCSD);
+  HAL_SD_GetCardInfo(&hsd1, &pCardInfo);
+
+  uint8_t text[20];
+  sprintf((char *)&text, "DeviceSize: %ld", pCSD.DeviceSize);
+  LCD_ShowString(4, 4, ST7735Ctx.Width, 16, 16, text);
+  HAL_Delay(50);
+//  MX_USB_DEVICE_Init();
+//  while(1){
+//	  HAL_Delay(1000);
+//  }
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -245,9 +263,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 5;
-  RCC_OscInitStruct.PLL.PLLN = 96;
+  RCC_OscInitStruct.PLL.PLLN = 48;
   RCC_OscInitStruct.PLL.PLLP = 2;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 5;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_2;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
@@ -264,7 +282,7 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV1;
