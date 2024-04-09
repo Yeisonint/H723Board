@@ -186,9 +186,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   LCD_Test();
   #ifdef TFT96
-//  Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA);
-  // Init OV2640 in RAW mode (RGB565)
-  ov2640_init2(&hi2c1, FRAMESIZE_QQVGA, PIXFORMAT_RGB565,true,true);
+  Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA);
+//   Init OV2640 in RAW mode (RGB565)
+//  ov2640_init2(&hi2c1, FRAMESIZE_QQVGA, PIXFORMAT_RGB565,true,true);
   #elif TFT18
   Camera_Init_Device(&hi2c1, FRAMESIZE_QQVGA2);
   #endif
@@ -202,10 +202,8 @@ int main(void)
   sprintf((char *)&text, "DeviceSize: %ld", pCSD.DeviceSize);
   LCD_ShowString(4, 4, ST7735Ctx.Width, 16, 16, text);
   HAL_Delay(50);
-//  MX_USB_DEVICE_Init();
-//  while(1){
-//	  HAL_Delay(1000);
-//  }
+  MX_USB_DEVICE_Init();
+  HAL_PWREx_EnableUSBVoltageDetector();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -296,6 +294,18 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void StartDefaultTask(void *argument)
+{
+  /* init code for USB_DEVICE */
+//  MX_USB_DEVICE_Init();
+  /* USER CODE BEGIN StartDefaultTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartDefaultTask */
+}
 void BlinkLEDTask(void *argument)
 {
   for(;;)
